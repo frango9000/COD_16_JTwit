@@ -1,9 +1,14 @@
 package twitter.persistence;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Scanner;
+
 /**
  * clase que crea, controla y limpia los tokens de autenticacion de api
+ *
  * @author fsancheztemprano
  */
 public class PersistConsumerKey implements Persistable {
@@ -22,7 +27,8 @@ public class PersistConsumerKey implements Persistable {
 
     /**
      * metodo para permitir usar otra api secret token
-     * @param apikey - string con la key
+     *
+     * @param apikey    - string con la key
      * @param apisecret - string con la secretkey
      */
     public PersistConsumerKey(String apikey, String apisecret) {
@@ -72,6 +78,7 @@ public class PersistConsumerKey implements Persistable {
 
     /**
      * lee las tokens del archivo file si existe
+     *
      * @throws FileNotFoundException
      */
     @Override

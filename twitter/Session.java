@@ -7,9 +7,11 @@ import twitter4j.conf.ConfigurationBuilder;
 
 import java.io.IOException;
 import java.util.logging.Level;
+
 /**
- * Clase session, contiene la logica de creacion y utilizacion de una 
+ * Clase session, contiene la logica de creacion y utilizacion de una
  * session en twitter
+ *
  * @author fsancheztemprano
  */
 class Session {
@@ -19,10 +21,10 @@ class Session {
      */
     private final Twitter twitter;
     /**
-     * parametro PersistConsumerKey que contiene el procesado de una consumer 
-     * key preestablecida o la carga de una consumer key desde el 
+     * parametro PersistConsumerKey que contiene el procesado de una consumer
+     * key preestablecida o la carga de una consumer key desde el
      * archivo consumer.dat
-     * 
+     * <p>
      * estos son los codigos de autenticacion api de este cliente.
      */
     private final PersistConsumerKey consumer;
@@ -31,10 +33,10 @@ class Session {
      */
     private final String screenName;
     /**
-     * parametro PersistAccessToken que contiene el procesado de una token 
-     * key preestablecida o la carga de una token key desde el 
+     * parametro PersistAccessToken que contiene el procesado de una token
+     * key preestablecida o la carga de una token key desde el
      * archivo consumer.dat
-     * 
+     * <p>
      * estos son los codigos de autenticacion del usuario que inicia sesion
      */
     private final PersistAccessToken token;
@@ -51,13 +53,11 @@ class Session {
     /**
      * consturctor base para las sesions
      *
-     *
-     *
      * @param persist - persist = true -> intenta retomar una session previamente autenticada
-     *      * y guardada.
-     *      *
-     *      * persist = false -> borra cualquier sesion previa(si existe) e inicia
-     *      * una nueva sesion
+     *                * y guardada.
+     *                *
+     *                * persist = false -> borra cualquier sesion previa(si existe) e inicia
+     *                * una nueva sesion
      * @throws TwitterException - lanzamos esta excepcion si hay error de autenticacion con twitter
      */
     public Session(boolean persist) throws TwitterException {
@@ -110,10 +110,20 @@ class Session {
     }
 
     /**
+     * devuelve un string con un formato de fecha hora basico a partir de un objeto Date
+     *
+     * @param date - objeto Date
+     * @return - String formateado
+     */
+    public static String dateFormater(java.util.Date date) {
+        return String.format("%02d:%02d:%02d %02d/%02d/%04d", date.getHours(), date.getMinutes(), date.getSeconds(), date.getDate(), date.getMonth(), date.getYear());
+    }
+
+    /**
      * getter del parametro twitter
      * con este metodo accedemos a las funciones adicionales (no implementadas) de la session de twitter
      *
-     * @return  - Twitter
+     * @return - Twitter
      */
     public Twitter getTwitter() {
         return twitter;
@@ -121,6 +131,7 @@ class Session {
 
     /**
      * getter del parameto screenName
+     *
      * @return - screenName
      */
     public String getScreenName() {
@@ -136,7 +147,7 @@ class Session {
         try {
             ResponseList<Status> listado = listado = twitter.getHomeTimeline(pagina);
             for (Status status : listado) {
-                System.out.printf("%20s | %15s | %100s %n",  dateFormater(status.getCreatedAt()), ("@" + status.getUser().getScreenName()), status.getText());
+                System.out.printf("%20s | %15s | %100s %n", dateFormater(status.getCreatedAt()), ("@" + status.getUser().getScreenName()), status.getText());
             }
         } catch (TwitterException e) {
             e.printStackTrace();
@@ -145,15 +156,16 @@ class Session {
 
     /**
      * metodo que imprime en consola el timeline de un usuario que determinamos con su screenName
+     *
      * @param screenName - screenName del usuario a consultar
      */
-    public void printTimeline(String screenName){
+    public void printTimeline(String screenName) {
         Paging pagina = new Paging();
         pagina.setCount(50);
         try {
             ResponseList<Status> listado = twitter.getUserTimeline(screenName);
             for (Status status : listado) {
-                System.out.printf("%20s | %15s | %100s %n",  dateFormater(status.getCreatedAt()), ("@" + status.getUser().getScreenName()), status.getText());
+                System.out.printf("%20s | %15s | %100s %n", dateFormater(status.getCreatedAt()), ("@" + status.getUser().getScreenName()), status.getText());
             }
         } catch (TwitterException e) {
             e.printStackTrace();
@@ -163,6 +175,7 @@ class Session {
     /**
      * metodo que publica un tweet
      * el string a ser publicado en el tweet lo recibimos como parametro
+     *
      * @param string
      */
     public void updateStatus(String string) {
@@ -172,12 +185,14 @@ class Session {
             e.printStackTrace();
         }
     }
+
     /**
-     * metodeo que devuelve los resultados de la busqueda del string que 
+     * metodeo que devuelve los resultados de la busqueda del string que
      * recibe como parametro
+     *
      * @param string
      */
-    public void searchStatus(String string)   {
+    public void searchStatus(String string) {
         try {
             Query query = new Query(string);
             QueryResult result = twitter.search(query);
@@ -191,10 +206,11 @@ class Session {
 
     /**
      * recibe el userId y devuelve el screeenName en String
+     *
      * @param userId - del usuario a buscar
      * @return - screenName en String
      */
-    public String getScreenName(long userId){
+    public String getScreenName(long userId) {
         try {
             return twitter.showUser(userId).getScreenName();
         } catch (TwitterException e) {
@@ -206,6 +222,7 @@ class Session {
     /**
      * metodo que recibe el string con una consulta de nombres de usuario e imprime por consola los screenName
      * que coincidan
+     *
      * @param query - String a consultar
      */
     public void searchUser(String query) {
@@ -238,6 +255,7 @@ class Session {
 
     /**
      * nos devuelve el objeto User que representa a un usuario de twitter determinado por su screenName
+     *
      * @param query - screenName del usuario
      * @return - objeto User
      * @throws TwitterException - si hay problemas de autenticacion/conexion con twitter
@@ -248,10 +266,11 @@ class Session {
 
     /**
      * envia un dm a un usuario determinado
+     *
      * @param recipientId ID del usuario que recibira el dm
-     * @param dmText - String con el contenido del dm
+     * @param dmText      - String con el contenido del dm
      */
-    public void sendDM(long recipientId, String dmText){
+    public void sendDM(long recipientId, String dmText) {
         try {
             DirectMessage dm = twitter.sendDirectMessage(recipientId, dmText);
             System.out.println("Direct message successfully sent to " + getScreenName(dm.getRecipientId()));
@@ -264,20 +283,21 @@ class Session {
     /**
      * metodo que imprime en consola los ultimos 20 dms en nuestro buzon, enviados y recibidos
      */
-    public void printDMs(){
+    public void printDMs() {
         try {
             int count = 20;
             DirectMessageList messages;
-                messages = twitter.getDirectMessages(count);
-                for (DirectMessage message : messages) {
-                    System.out.printf("%10s | %15s | %15s | %100s %n", dateFormater(message.getCreatedAt()), getScreenName(message.getSenderId()), getScreenName(message.getRecipientId()), message.getText());
-                }
-                System.out.println("done.");
+            messages = twitter.getDirectMessages(count);
+            for (DirectMessage message : messages) {
+                System.out.printf("%10s | %15s | %15s | %100s %n", dateFormater(message.getCreatedAt()), getScreenName(message.getSenderId()), getScreenName(message.getRecipientId()), message.getText());
+            }
+            System.out.println("done.");
         } catch (TwitterException te) {
             te.printStackTrace();
             System.out.println("Failed to get messages: " + te.getMessage());
         }
     }
+
     /**
      * metodo que guarda los token de acceso en un archivo para reiniciar session
      */
@@ -290,14 +310,5 @@ class Session {
      */
     public void clearSession() {
         token.removeKey();
-    }
-
-    /**
-     * devuelve un string con un formato de fecha hora basico a partir de un objeto Date
-     * @param date - objeto Date
-     * @return - String formateado
-     */
-    public static String dateFormater(java.util.Date date){
-        return String.format("%02d:%02d:%02d %02d/%02d/%04d", date.getHours(), date.getMinutes(), date.getSeconds(), date.getDate(), date.getMonth(), date.getYear());
     }
 }

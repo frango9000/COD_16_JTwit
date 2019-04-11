@@ -9,8 +9,10 @@ import twitter4j.conf.ConfigurationBuilder;
 
 import java.io.*;
 import java.util.Scanner;
+
 /**
  * clase que crea, controla y limpia los tokens de autenticacion de usuario
+ *
  * @author fsancheztemprano
  */
 public class PersistAccessToken implements Persistable {
@@ -19,7 +21,7 @@ public class PersistAccessToken implements Persistable {
      */
     public static final File file = new File("token.dat");
     //public static final File file = new File(System.getProperty("user.home")+"/consumer.txt".replace("\\","/"));
-    
+
     private String token;
     private String secretToken;
 
@@ -81,7 +83,8 @@ public class PersistAccessToken implements Persistable {
 
     /**
      * metodo que lee las tokens del file si existe
-     * @throws FileNotFoundException  si el file no existe
+     *
+     * @throws FileNotFoundException si el file no existe
      */
     @Override
     public void readKey() throws FileNotFoundException {
@@ -103,6 +106,7 @@ public class PersistAccessToken implements Persistable {
 
     /**
      * metodo que procesa la validacion de los api key y la autenticacion del cliente
+     *
      * @param consumer
      * @throws IOException
      * @throws TwitterException
