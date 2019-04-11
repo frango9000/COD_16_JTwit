@@ -118,17 +118,29 @@ class Session {
     public void printTimeline() {
         Paging pagina = new Paging();
         pagina.setCount(50);
-        ResponseList<Status> listado = null;
         try {
-            listado = twitter.getHomeTimeline(pagina);
+            ResponseList<Status> listado = listado = twitter.getHomeTimeline(pagina);
+            for (Status status : listado) {
+                System.out.printf("%20s | %15s | %100s %n",  dateFormater(status.getCreatedAt()), ("@" + status.getUser().getScreenName()), status.getText());
+            }
         } catch (TwitterException e) {
             e.printStackTrace();
         }
-        assert listado != null;
-        for (Status status : listado) {
-            System.out.printf("%20s | %15s | %100s %n",  dateFormater(status.getCreatedAt()), ("@" + status.getUser().getScreenName()), status.getText());
+    }
+
+    public void printTimeline(String string){
+        Paging pagina = new Paging();
+        pagina.setCount(50);
+        try {
+            ResponseList<Status> listado = twitter.getUserTimeline(string);
+            for (Status status : listado) {
+                System.out.printf("%20s | %15s | %100s %n",  dateFormater(status.getCreatedAt()), ("@" + status.getUser().getScreenName()), status.getText());
+            }
+        } catch (TwitterException e) {
+            e.printStackTrace();
         }
     }
+
 /**
  * metodo que publica un tweet 
  * el string a ser publicado en el tweet lo recibimos como parametro
@@ -182,6 +194,9 @@ class Session {
         } catch (TwitterException e) {
             e.printStackTrace();
         }
+    }
+    public User pickUser(String query) throws TwitterException {
+        return twitter.showUser(query);
     }
 
     /**

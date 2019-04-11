@@ -2,6 +2,7 @@ package twitter;
 
 import twitter.persistence.PersistAccessToken;
 import twitter4j.TwitterException;
+import twitter4j.User;
 
 import java.util.Scanner;
 /**
@@ -68,14 +69,12 @@ public class Main {
                     session.printTimeline();
                     break;
                 case 2://Tweet
-                    System.out.println("Enter Tweet: \n");
-                    String tweet = new Scanner(System.in).nextLine();
+                    String tweet = scanString("Enter Tweet: ");
                     tweet = tweet.substring(0, Math.min(139, tweet.length()));
                     session.updateStatus(tweet);
                     break;
                 case 3://Search Tweets
-                    System.out.println("Enter search term: \n");
-                    String search = new Scanner(System.in).nextLine();
+                    String search = scanString("Enter search term: \n");
                     session.searchStatus(search);
                     break;                    
                 case 4://View DMs
@@ -103,6 +102,10 @@ public class Main {
         }
     }
 
+    private static int getPick(String[] options, String title){
+        System.out.println("\n\n" + title);
+        return getPick(options);
+    }
     private static int getPick(String[] options) {
         for (int i = 0; i < options.length; i++) {
             System.out.println(i + 1 + ". " + options[i]);
@@ -128,8 +131,7 @@ public class Main {
             int n = getPick(options);
             switch (n) {
                 case 1:
-                    System.out.println("Enter search term: \n");
-                    String userQuery = new Scanner(System.in).nextLine();
+                    String userQuery = scanString("Enter search term: ");
                     session.searchUser(userQuery);
                     break;
                 case 2:
@@ -146,7 +148,28 @@ public class Main {
     }
 
     public static void interactionMenu(Session session){
+        String query = scanString("Enter user screen name: ");
 
+        try {
+            User user = session.pickUser(query);
+            String[] options = {"View Timeline", "Send DM", "Back"};
+            while (true) {
+                int n = getPick(options, "@" + user.getScreenName());
+                switch (n){
+                    case 1:
+                        session.printTimeline(user.getScreenName());
+                        break;
+                    case 2://DM
+                        break;
+                    case 3:
+                        return;
+                    default:
+                        break;
+                }
+            }
+        } catch (TwitterException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -222,5 +245,13 @@ public class Main {
  */
     private static char scanChar() {
         return new Scanner(System.in).next().charAt(0);
+    }
+
+    private static String scanString(){
+        return new Scanner(System.in).nextLine();
+    }
+    private static String scanString(String message){
+        System.out.print(message);
+        return scanString();
     }
 }
