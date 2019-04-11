@@ -79,7 +79,7 @@ public class PersistConsumerKey implements Persistable {
     /**
      * lee las tokens del archivo file si existe
      *
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException - si falla al leer el archivo file
      */
     @Override
     public void readKey() throws FileNotFoundException {

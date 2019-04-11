@@ -21,14 +21,6 @@ class Session {
      */
     private final Twitter twitter;
     /**
-     * parametro PersistConsumerKey que contiene el procesado de una consumer
-     * key preestablecida o la carga de una consumer key desde el
-     * archivo consumer.dat
-     * <p>
-     * estos son los codigos de autenticacion api de este cliente.
-     */
-    private final PersistConsumerKey consumer;
-    /**
      * String q contiene el screen name del usuario autenticado
      */
     private final String screenName;
@@ -63,7 +55,14 @@ class Session {
     public Session(boolean persist) throws TwitterException {
         //intentamos leer un consumer.dat, si no existe realizamos 
         //la autenticacion OAuth
-        consumer = new PersistConsumerKey();
+        /**
+         * parametro PersistConsumerKey que contiene el procesado de una consumer
+         * key preestablecida o la carga de una consumer key desde el
+         * archivo consumer.dat
+         * <p>
+         * estos son los codigos de autenticacion api de este cliente.
+         */
+        PersistConsumerKey consumer = new PersistConsumerKey();
         try {
             consumer.readKey();
             //System.out.println("Consumer read from file.");
@@ -115,7 +114,7 @@ class Session {
      * @param date - objeto Date
      * @return - String formateado
      */
-    public static String dateFormater(java.util.Date date) {
+    private static String dateFormater(java.util.Date date) {
         return String.format("%02d:%02d:%02d %02d/%02d/%04d", date.getHours(), date.getMinutes(), date.getSeconds(), date.getDate(), date.getMonth(), date.getYear());
     }
 
@@ -145,7 +144,7 @@ class Session {
         Paging pagina = new Paging();
         pagina.setCount(50);
         try {
-            ResponseList<Status> listado = listado = twitter.getHomeTimeline(pagina);
+            ResponseList<Status> listado = twitter.getHomeTimeline(pagina);
             for (Status status : listado) {
                 System.out.printf("%20s | %15s | %100s %n", dateFormater(status.getCreatedAt()), ("@" + status.getUser().getScreenName()), status.getText());
             }
@@ -174,9 +173,8 @@ class Session {
 
     /**
      * metodo que publica un tweet
-     * el string a ser publicado en el tweet lo recibimos como parametro
      *
-     * @param string
+     * @param string -string a ser publicado en el tweet
      */
     public void updateStatus(String string) {
         try {
@@ -187,18 +185,15 @@ class Session {
     }
 
     /**
-     * metodeo que devuelve los resultados de la busqueda del string que
-     * recibe como parametro
+     * metodeo que devuelve los resultados de la busqueda un string
      *
-     * @param string
+     * @param string - string de la busqueda a realizar
      */
     public void searchStatus(String string) {
         try {
             Query query = new Query(string);
             QueryResult result = twitter.search(query);
-            result.getTweets().forEach((status) -> {
-                System.out.printf("%20s | %15s | %100s %n", dateFormater(status.getCreatedAt()), ("@" + status.getUser().getScreenName()), status.getText());
-            });
+            result.getTweets().forEach((status) -> System.out.printf("%20s | %15s | %100s %n", dateFormater(status.getCreatedAt()), ("@" + status.getUser().getScreenName()), status.getText()));
         } catch (TwitterException ex) {
             java.util.logging.Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -210,7 +205,7 @@ class Session {
      * @param userId - del usuario a buscar
      * @return - screenName en String
      */
-    public String getScreenName(long userId) {
+    private String getScreenName(long userId) {
         try {
             return twitter.showUser(userId).getScreenName();
         } catch (TwitterException e) {

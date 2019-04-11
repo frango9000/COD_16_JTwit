@@ -36,8 +36,8 @@ public class PersistAccessToken implements Persistable {
     /**
      * constructor que recibe los tokens de autorizacion
      *
-     * @param token
-     * @param secretTk
+     * @param token - token de autenticacion de usuario
+     * @param secretTk - secret token de autenticacion de usuario
      */
     public PersistAccessToken(String token, String secretTk) {
         this.token = token;
@@ -107,9 +107,9 @@ public class PersistAccessToken implements Persistable {
     /**
      * metodo que procesa la validacion de los api key y la autenticacion del cliente
      *
-     * @param consumer
-     * @throws IOException
-     * @throws TwitterException
+     * @param consumer - las secret token (normalmente tomamos la default de la clase PersistentConsumerKey
+     * @throws IOException - si hay error en la escritura de las tokens
+     * @throws TwitterException - si hay error de autenticacion
      */
     public void createAccessToken(PersistConsumerKey consumer) throws IOException, TwitterException {
         ConfigurationBuilder configBuilder = new ConfigurationBuilder();

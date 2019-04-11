@@ -157,7 +157,7 @@ public class Main {
      *
      * @param session - sesion autenticada correctamente
      */
-    public static void interactionMenu(Session session) {
+    private static void interactionMenu(Session session) {
         String query = scanString("Enter user screen name: ");
         try {
             User user = session.pickUser(query);
