@@ -140,6 +140,20 @@ class Session {
             e.printStackTrace();
         }
     }
+    /**
+     * metodeo que devuelve los resultados de la busqueda del string que 
+     * recibe como parametro
+     * @param string
+     * @throws TwitterException 
+     */
+    public void searchStatus(String string) throws TwitterException {
+    Query query = new Query(string);
+    QueryResult result = twitter.search(query);
+    result.getTweets().forEach((status) -> {
+        System.out.println("@" + status.getUser().getScreenName() + ":" + status.getText());
+        });    
+    }
+    
 /**
  * metodo que guarda los token de acceso en un archivo para reiniciar session 
  */
