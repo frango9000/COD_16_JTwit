@@ -2,9 +2,15 @@ package twitter.persistence;
 
 import java.io.*;
 import java.util.Scanner;
-
+/**
+ * clase que crea, controla y limpia los tokens de autenticacion de api
+ * @author fsancheztemprano
+ */
 public class PersistConsumerKey implements Persistable {
 
+    /**
+     * parametro con la ubicacion del archivo de guardado de tokens
+     */
     private final File file = new File("consumer.dat");
     private String apikey;
     private String apisecret;
@@ -14,11 +20,19 @@ public class PersistConsumerKey implements Persistable {
     public PersistConsumerKey() {
     }
 
+    /**
+     * metodo para permitir usar otra api secret token
+     * @param apikey - string con la key
+     * @param apisecret - string con la secretkey
+     */
     public PersistConsumerKey(String apikey, String apisecret) {
         this.apikey = apikey;
         this.apisecret = apisecret;
     }
 
+    /**
+     * valores por defecto asignados por el api de twitter
+     */
     @Override
     public void setDefault() {
         apikey = "VK9nTYQvKx76Doj6fAPPZdGmm";
@@ -41,6 +55,9 @@ public class PersistConsumerKey implements Persistable {
         this.apisecret = apisecret;
     }
 
+    /**
+     * guarda las tokens en el archivo file
+     */
     @Override
     public void saveKey() {
         try (PrintWriter pw = new PrintWriter(file)) {
@@ -53,6 +70,10 @@ public class PersistConsumerKey implements Persistable {
         }
     }
 
+    /**
+     * lee las tokens del archivo file si existe
+     * @throws FileNotFoundException
+     */
     @Override
     public void readKey() throws FileNotFoundException {
         Scanner scan = new Scanner(file);
@@ -60,15 +81,5 @@ public class PersistConsumerKey implements Persistable {
         this.apisecret = scan.nextLine();
         System.out.println("Read consumer OK");
         //System.out.println(file.getAbsolutePath());
-    }
-
-    @Override
-    public String toString() {
-        return "PersistConsumerKey{" +
-                "apikey='" + apikey + '\'' +
-                ", apisecret='" + apisecret + '\'' +
-                ", file=" + file +
-                ", exists=" + file.exists() +
-                '}';
     }
 }

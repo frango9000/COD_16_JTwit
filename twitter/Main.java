@@ -11,7 +11,6 @@ import java.util.Scanner;
  * @author fsancheztemprano
  */
 public class Main {
-
     public static void main(String[] args) {
         Session session;
         //logica del cliente sin argumentos
@@ -19,48 +18,58 @@ public class Main {
             session = getSession();
             menu(session);
         } else {
-            //logica del cliente con argumentos de consola
-            if (PersistAccessToken.file.exists()) {
-                try {
-                    session = new Session(true);
-                    switch (args[0]) {
-                        case "auth"://TODO
-                            break;
-                        case "timeline":
-                            session.printTimeline();
-                            System.exit(3);
-                        case "tweet":
-                            StringBuilder tweetsb = new StringBuilder();
-                            for (int i = 1; i < args.length; i++) {
-                                tweetsb.append(args[i]);
-                                if (i != args.length - 1)
-                                    tweetsb.append(" ");
-                            }
-                            String tweet = tweetsb.toString();
-                            tweet = tweet.substring(0, Math.min(139, tweet.length()));
-                            session.updateStatus(tweet);
-                            System.exit(4);
-                        case "clear":
-                            session.clearSession();
-                            System.exit(5);
-                        case "help":
-                        default:
-                            System.out.println("jtwit timeline\njtwit tweet <status message>\njtwit clear\njtwit help");
-                            System.exit(6);
-                    }
-                } catch (TwitterException e) {
-                    System.out.println("You need an authenticated session to use this command.\nTo authenticate use only : jtwit");
-                }
-            } else
-                System.out.println("You need an authenticated session to use this command.\nTo authenticate use only : jtwit");
+            consoleLogic(args);
         }
+    }
+
+    /**
+     * metodo que trata el uso de este programa con argumentos
+     * @param args - argumentos de ejecucion
+     */
+    private static void consoleLogic(String[] args) {
+        Session session;//logica del cliente con argumentos de consola
+        if (PersistAccessToken.file.exists()) {
+            try {
+                session = new Session(true);
+                switch (args[0]) {
+                    case "auth":
+                        session = getSession();
+                        askSaveSession(session);
+                        System.exit(2);
+                    case "timeline":
+                        session.printTimeline();
+                        System.exit(3);
+                    case "tweet":
+                        StringBuilder tweetsb = new StringBuilder();
+                        for (int i = 1; i < args.length; i++) {
+                            tweetsb.append(args[i]);
+                            if (i != args.length - 1)
+                                tweetsb.append(" ");
+                        }
+                        String tweet = tweetsb.toString();
+                        tweet = tweet.substring(0, Math.min(139, tweet.length()));
+                        session.updateStatus(tweet);
+                        System.exit(4);
+                    case "clear":
+                        session.clearSession();
+                        System.exit(5);
+                    case "help":
+                    default:
+                        System.out.println("jtwit timeline\njtwit tweet <status message>\njtwit clear\njtwit help");
+                        System.exit(6);
+                }
+            } catch (TwitterException e) {
+                System.out.println("You need an authenticated session to use this command.\nTo authenticate use only : jtwit");
+            }
+        } else
+            System.out.println("You need an authenticated session to use this command.\nTo authenticate use only : jtwit");
     }
 
     /**
      * muestra un simple menu de opciones y acciones para realizar cuando la sesion
      * ya se ha autenticado
      *
-     * @param session recibe una session que debe estar autenticada
+     * @param session - sesion autenticada correctamente
      */
     private static void menu(Session session) {
         String[] options = {"Timeline", "Tweet", "Search Tweets","View DMs", "Search user", "Exit"};
@@ -86,16 +95,7 @@ public class Main {
                     userQuery(session);
                     break;
                 case 6://Exit
-                    System.out.println("Save session? (Y/N) : ");
-                    Boolean answer = null;
-                    do {
-                        answer = consoleAssert();
-                    } while (answer == null);
-                    if (answer)
-                        session.saveSession();
-                    else
-                        session.clearSession();
-                    System.out.println("Session " + (PersistAccessToken.file.exists() ? "saved." : "cleared."));
+                    askSaveSession(session);
                     System.out.println("\nThank You");
                     System.exit(1);
                 default:
@@ -105,28 +105,27 @@ public class Main {
         }
     }
 
-    private static int getPick(String[] options, String title){
-        System.out.println("\n\n" + title);
-        return getPick(options);
-    }
-    private static int getPick(String[] options) {
-        for (int i = 0; i < options.length; i++) {
-            System.out.println(i + 1 + ". " + options[i]);
-        }
-        String opt = "X";
-        int n = 0;
+    /**
+     * metodo que le pregunta al usuario si quiere guardar la sesion autenticada y realiza la accion especificada
+     * @param session - sesion autenticada correctamente
+     */
+    private static void askSaveSession(Session session) {
+        System.out.println("Save session? (Y/N) : ");
+        Boolean answer = null;
         do {
-            do {
-                opt = new Scanner(System.in).next();
-            } while (!isInteger(opt));
-            n = Integer.parseInt(opt);
-        } while (n < 1 || n > options.length);
-        return n;
+            answer = consoleAssert();
+        } while (answer == null);
+        if (answer)
+            session.saveSession();
+        else
+            session.clearSession();
+        System.out.println("Session " + (PersistAccessToken.file.exists() ? "saved." : "cleared."));
     }
 
+
     /**
-     *
-     * @param session
+     *menu de consulta y seleccion de usuarios
+     * @param session - sesion autenticada correctamente
      */
     private static void userQuery(Session session) {
         String[] options = {"Search User", "Pick User", "Back"};
@@ -148,6 +147,10 @@ public class Main {
         }
     }
 
+    /**
+     * menu de opciones para interactuar con otro usuario de twitter
+     * @param session - sesion autenticada correctamente
+     */
     public static void interactionMenu(Session session){
         String query = scanString("Enter user screen name: ");
         try {
@@ -213,9 +216,42 @@ public class Main {
     }
 
     /**
+     * metodo que recibe un array de strings cuyos elementos representan una de las opciones de un
+     * menu para interactuar con el usuario, imprime cada opcion (indice + 1), espera la entrada de texto
+     * y por ultimo retorna la respuesta de usuario en un int
+     * @param options - array de strings con cada opcion del menu
+     * @return - opcion escogida (indice + 1);
+     */
+    private static int getPick(String[] options) {
+        for (int i = 0; i < options.length; i++) {
+            System.out.println(i + 1 + ". " + options[i]);
+        }
+        String opt = "X";
+        int n = 0;
+        do {
+            do {
+                opt = new Scanner(System.in).next();
+            } while (!isInteger(opt));
+            n = Integer.parseInt(opt);
+        } while (n < 1 || n > options.length);
+        return n;
+    }
+
+    /**
+     * sobrecarga del metodo getPick para imprimir un titulo antes de imprimir las opciones del menu
+     * @param options - array de strings con cada opcion del menu
+     * @param title - titulo a mostrar
+     * @return - opcion escogida (indice + 1);
+     */
+    private static int getPick(String[] options, String title){
+        System.out.println("\n\n" + title);
+        return getPick(options);
+    }
+
+    /**
      * assert que devuelve true si el string recibido es parseable a int
      * @param str a comprobar
-     * @return
+     * @return - true si el string recibido es parseable a int
      */
     private static boolean isInteger(String str) {
         try {
@@ -245,15 +281,25 @@ public class Main {
 
     /**
      * generamos un scanner para recibir el char introducido por el usuario
-     * @return
+     * @return - char introducido por el usuario
      */
     private static char scanChar() {
         return new Scanner(System.in).next().charAt(0);
     }
 
+    /**
+     * crea un scanner y retorna el string introducido por el usuario
+     * @return - string introducido por el usuario
+     */
     private static String scanString(){
         return new Scanner(System.in).nextLine();
     }
+
+    /**
+     * sobrecarga del metodo anterior que imprime un mensaje informando al usuario que debe introducir
+     * @param message - string informativo
+     * @return - string introducido por el usuario
+     */
     private static String scanString(String message){
         System.out.print(message);
         return scanString();
