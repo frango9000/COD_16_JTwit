@@ -63,7 +63,7 @@ public class Main {
     private static void menu(Session session) {
         String[] options = {"Timeline", "Tweet", "Search Tweets","View DMs", "Search user", "Exit"};
         while (true) {
-            int n = getPick(options);
+            int n = getPick(options,"@" + session.getScreenName());
             switch (n) {
                 case 1://Timeline
                     session.printTimeline();
@@ -78,7 +78,8 @@ public class Main {
                     session.searchStatus(search);
                     break;                    
                 case 4://View DMs
-
+                    session.printDMs();
+                    break;
                 case 5://Search user
                     userQuery(session);
                     break;
@@ -128,7 +129,7 @@ public class Main {
     private static void userQuery(Session session) {
         String[] options = {"Search User", "Pick User", "Back"};
         while (true) {
-            int n = getPick(options);
+            int n = getPick(options, "@" + session.getScreenName() + " | User Interaction Menu");
             switch (n) {
                 case 1:
                     String userQuery = scanString("Enter search term: ");
@@ -142,14 +143,11 @@ public class Main {
                 default:
                     System.out.println("Invalid Option.");
             }
-
-
         }
     }
 
     public static void interactionMenu(Session session){
         String query = scanString("Enter user screen name: ");
-
         try {
             User user = session.pickUser(query);
             String[] options = {"View Timeline", "Send DM", "Back"};
@@ -160,6 +158,8 @@ public class Main {
                         session.printTimeline(user.getScreenName());
                         break;
                     case 2://DM
+                        String dm = scanString("Enter message to send directly to @" + user.getScreenName() + " :\n");
+                        session.sendDM(user.getId(), dm);
                         break;
                     case 3:
                         return;
@@ -225,7 +225,7 @@ public class Main {
     }
 /**
  * procesamos el string introducido por el usuario en consola
- * @return true si el usuario introduce Y o y, false si N o n
+ * @return - true si el usuario introduce Y o y, false si N o n
  * null si no es ni N n Y y
  */
     private static Boolean consoleAssert() {

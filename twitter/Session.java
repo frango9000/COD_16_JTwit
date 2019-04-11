@@ -27,6 +27,10 @@ class Session {
      */
     private final PersistConsumerKey consumer;
     /**
+     * String q contiene el screen name del usuario autenticado
+     */
+    private final String screenName;
+    /**
      * parametro PersistAccessToken que contiene el procesado de una token 
      * key preestablecida o la carga de una token key desde el 
      * archivo consumer.dat
@@ -67,10 +71,10 @@ class Session {
             //consumer.saveKey();
             System.out.println("Defaults consumer set!");
         }
-/**
- * intentamos leer los tokens de una session previamente autenticada 
- * y si no es valida o no existe solicitaremos autenticacion para 
- * crear una nueva session
+/*
+  intentamos leer los tokens de una session previamente autenticada
+  y si no es valida o no existe solicitaremos autenticacion para
+  crear una nueva session
  */
         token = new PersistAccessToken();
         if (!persist)
@@ -88,9 +92,9 @@ class Session {
             //token.setDefault();TwitterException ex
             //e.printStackTrace();
         }
-/**
- * con todos los codigos de autenticacion validamos instanciamos 
- * el Objeto twitter
+/*
+  con todos los codigos de autenticacion validamos instanciamos
+  el Objeto twitter
  */
         ConfigurationBuilder configBuilder = new ConfigurationBuilder();
         configBuilder.setDebugEnabled(true)
@@ -99,8 +103,8 @@ class Session {
                 .setOAuthAccessToken(token.getToken())
                 .setOAuthAccessTokenSecret(token.getSecretToken());
         twitter = new TwitterFactory(configBuilder.build()).getInstance();
-
-        System.out.println("Welcome @" + twitter.showUser(twitter.getScreenName()).getScreenName());
+        screenName = twitter.getScreenName();
+        System.out.println("Authentication granted to @" + twitter.showUser(twitter.getScreenName()).getScreenName());
     }
     
 /**
@@ -112,7 +116,12 @@ class Session {
     public Twitter getTwitter() {
         return twitter;
     }
-/**
+
+    public String getScreenName() {
+        return screenName;
+    }
+
+    /**
  * imprime por consola el timeline de la cuenta autenticada
  */
     public void printTimeline() {
@@ -169,6 +178,14 @@ class Session {
             java.util.logging.Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    public String getScreenName(long userId){
+        try {
+            return twitter.showUser(userId).getScreenName();
+        } catch (TwitterException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 
     public void searchUser(String query) {
         int page = 1;
@@ -178,6 +195,7 @@ class Session {
             do {
                 users = twitter.searchUsers(query, page);
                 String screenName = "";
+                System.out.println();
                 for (User user : users) {
                     if (user.getScreenName().equalsIgnoreCase(screenName)) {
                         break start;
@@ -194,11 +212,36 @@ class Session {
         } catch (TwitterException e) {
             e.printStackTrace();
         }
+        System.out.println();
     }
     public User pickUser(String query) throws TwitterException {
         return twitter.showUser(query);
     }
 
+    public void sendDM(long recipientId, String message){
+        try {
+            DirectMessage dm = twitter.sendDirectMessage(recipientId, message);
+            System.out.println("Direct message successfully sent to " + getScreenName(dm.getRecipientId()));
+            System.out.println("Message sent: " + dm.getText());
+        } catch (TwitterException e) {
+            System.out.println("Failed to send a direct message: " + e.getMessage());
+        }
+    }
+
+    public void printDMs(){
+        try {
+            int count = 20;
+            DirectMessageList messages;
+                messages = twitter.getDirectMessages(count);
+                for (DirectMessage message : messages) {
+                    System.out.printf("%10s | %15s | %15s | %100s %n", dateFormater(message.getCreatedAt()), getScreenName(message.getSenderId()), getScreenName(message.getRecipientId()), message.getText());
+                }
+                System.out.println("done.");
+        } catch (TwitterException te) {
+            te.printStackTrace();
+            System.out.println("Failed to get messages: " + te.getMessage());
+        }
+    }
     /**
      * metodo que guarda los token de acceso en un archivo para reiniciar session
      */
@@ -213,6 +256,6 @@ class Session {
     }
 
     public static String dateFormater(java.util.Date date){
-        return String.format("%02d:%02d:%02d %02d/%02d/%02d", date.getHours(), date.getMinutes(), date.getSeconds(), date.getDate(), date.getMonth(), date.getYear());
+        return String.format("%02d:%02d:%02d %02d/%02d/%04d", date.getHours(), date.getMinutes(), date.getSeconds(), date.getDate(), date.getMonth(), date.getYear());
     }
 }
