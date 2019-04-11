@@ -9,24 +9,37 @@ import twitter4j.conf.ConfigurationBuilder;
 
 import java.io.*;
 import java.util.Scanner;
-
-public class PersistAccessToken implements Persistable, Serializable {
-
+/**
+ * clase que crea, controla y limpia los tokens de autenticacion de usuario
+ * @author fsancheztemprano
+ */
+public class PersistAccessToken implements Persistable {
+    /**
+     * parametro con la ubicacion del archivo de guardado de tokens
+     */
     public static final File file = new File("token.dat");
+    //public static final File file = new File(System.getProperty("user.home")+"/consumer.txt".replace("\\","/"));
+    
     private String token;
     private String secretToken;
-    //public static final File file = new File(System.getProperty("user.home")+"/consumer.txt".replace("\\","/"));
 
     private Scanner scan;
-
+/**
+ * constructor por defecto
+ */
     public PersistAccessToken() {
     }
-
+/**
+ * constructor que recibe los tokens de autorizacion
+ * @param token
+ * @param secretTk 
+ */
     public PersistAccessToken(String token, String secretTk) {
         this.token = token;
         this.secretToken = secretTk;
     }
 
+    @Override
     public void setDefault() {
         token = "**************************************************";
         secretToken = "*********************************************";
@@ -47,7 +60,10 @@ public class PersistAccessToken implements Persistable, Serializable {
     public void setSecretToken(String secretToken) {
         this.secretToken = secretToken;
     }
-
+/**
+ * guardamos los tokens autenticados en el archivo file para guardar la session
+ */
+    @Override
     public void saveKey() {
         try (PrintWriter pw = new PrintWriter(file)) {
             pw.println(token);
@@ -58,14 +74,20 @@ public class PersistAccessToken implements Persistable, Serializable {
         }
         System.out.println("Token saved.");
     }
-
+/**
+ * metodo que lee las tokens del file si existe
+ * @throws FileNotFoundException  si el file no existe
+ */
+    @Override
     public void readKey() throws FileNotFoundException {
         scan = new Scanner(file);
         this.token = scan.nextLine();
         this.secretToken = scan.nextLine();
         System.out.println("Read token OK");
     }
-
+/**
+ * elimina el file que contiene las tokes si existe
+ */
     public void removeKey() {
         if (scan != null)
             scan.close();
@@ -73,7 +95,12 @@ public class PersistAccessToken implements Persistable, Serializable {
         //System.out.println("Token Killed");
     }
 
-
+/**
+ * metodo que procesa la validacion de los api key y la autenticacion del cliente 
+ * @param consumer
+ * @throws IOException
+ * @throws TwitterException 
+ */
     public void createAccessToken(PersistConsumerKey consumer) throws IOException, TwitterException {
         ConfigurationBuilder configBuilder = new ConfigurationBuilder();
         configBuilder.setDebugEnabled(true)

@@ -3,7 +3,7 @@ package twitter.persistence;
 import java.io.*;
 import java.util.Scanner;
 
-public class PersistConsumerKey implements Persistable, Serializable {
+public class PersistConsumerKey implements Persistable {
 
     private final File file = new File("consumer.dat");
     private String apikey;
@@ -19,6 +19,7 @@ public class PersistConsumerKey implements Persistable, Serializable {
         this.apisecret = apisecret;
     }
 
+    @Override
     public void setDefault() {
         apikey = "VK9nTYQvKx76Doj6fAPPZdGmm";
         apisecret = "8TvU3Sf5YwgCWbqvBdVDqGZppiOk3TUZcQgbH88xmxeeD4ATib";
@@ -40,6 +41,7 @@ public class PersistConsumerKey implements Persistable, Serializable {
         this.apisecret = apisecret;
     }
 
+    @Override
     public void saveKey() {
         try (PrintWriter pw = new PrintWriter(file)) {
             pw.println(apikey);
@@ -51,6 +53,7 @@ public class PersistConsumerKey implements Persistable, Serializable {
         }
     }
 
+    @Override
     public void readKey() throws FileNotFoundException {
         Scanner scan = new Scanner(file);
         this.apikey = scan.nextLine();
