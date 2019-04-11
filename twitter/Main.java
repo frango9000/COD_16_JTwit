@@ -58,7 +58,7 @@ public class Main {
  * @param session recibe una session que debe estar autenticada
  */
     private static void menu(Session session) {
-        String[] options = {"Timeline", "Tweet", "Exit"};
+        String[] options = {"Timeline", "Tweet", "Search Tweet","Timeline of User", "PM to user", "Exit"};
         while (true) {
             for (int i = 0; i < options.length; i++) {
                 System.out.println(i + 1 + ". " + options[i]);
@@ -73,16 +73,26 @@ public class Main {
             } while (n < 1 || n > options.length);
 
             switch (n) {
-                case 1:
+                case 1://Timeline
                     session.printTimeline();
                     break;
-                case 2:
+                case 2://Tweet
                     System.out.println("Enter Tweet: \n");
                     String tweet = new Scanner(System.in).nextLine();
                     tweet = tweet.substring(0, Math.min(139, tweet.length()));
                     session.updateStatus(tweet);
                     break;
-                case 3:
+                case 3://Search Tweet
+                    System.out.println("Enter search term: \n");
+                    String search = new Scanner(System.in).nextLine();
+                    session.searchStatus(search);
+                    break;                    
+                case 4://Timeline of User
+                case 5://PM to user
+                    
+                    
+
+                case 6://Exit
                     System.out.println("Save session? (Y/N) : ");
                     Boolean answer = null;
                     do {
@@ -95,7 +105,6 @@ public class Main {
                     System.out.println("Session " + (PersistAccessToken.file.exists() ? "saved." : "cleared."));
                     System.out.println("\nThank You");
                     System.exit(1);
-
                 default:
                     System.out.println("DefBug");
 

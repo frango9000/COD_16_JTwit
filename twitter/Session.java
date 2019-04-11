@@ -6,6 +6,7 @@ import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
 import java.io.IOException;
+import java.util.logging.Level;
 /**
  * Clase session, contiene la logica de creacion y utilizacion de una 
  * session en twitter
@@ -125,7 +126,7 @@ class Session {
         }
         assert listado != null;
         for (Status status : listado) {
-            System.out.printf("%30s | %15s | %100s %n", status.getCreatedAt().toString(), ("@" + status.getUser().getScreenName()), status.getText());
+            System.out.printf("%20s | %15s | %100s %n",  dateFormater(status.getCreatedAt()), ("@" + status.getUser().getScreenName()), status.getText());
         }
     }
 /**
@@ -146,12 +147,16 @@ class Session {
      * @param string
      * @throws TwitterException 
      */
-    public void searchStatus(String string) throws TwitterException {
-    Query query = new Query(string);
-    QueryResult result = twitter.search(query);
-    result.getTweets().forEach((status) -> {
-        System.out.println("@" + status.getUser().getScreenName() + ":" + status.getText());
-        });    
+    public void searchStatus(String string)   {
+        try {
+            Query query = new Query(string);
+            QueryResult result = twitter.search(query);
+            result.getTweets().forEach((status) -> {
+                System.out.println("@" + status.getUser().getScreenName() + ":" + status.getText());    
+            });
+        } catch (TwitterException ex) {
+            java.util.logging.Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 /**
@@ -167,4 +172,7 @@ class Session {
         token.removeKey();
     }
 
+    public static String dateFormater(java.util.Date date){
+        return String.format("%2d:%2d:%2d %2d/%2d/%2d",date.getHours(), date.getMinutes(), date.getSeconds(), date.getDate(), date.getMonth(), date.getYear());
+    }
 }
