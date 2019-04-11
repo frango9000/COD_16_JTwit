@@ -55,11 +55,13 @@ public class Main {
                 System.out.println("You need an authenticated session to use this command.\nTo authenticate use only : jtwit");
         }
     }
-/**
- * muestra un simple menu de opciones y acciones para realizar cuando la sesion 
- * ya se ha autenticado
- * @param session recibe una session que debe estar autenticada
- */
+
+    /**
+     * muestra un simple menu de opciones y acciones para realizar cuando la sesion
+     * ya se ha autenticado
+     *
+     * @param session recibe una session que debe estar autenticada
+     */
     private static void menu(Session session) {
         String[] options = {"Timeline", "Tweet", "Search Tweets","View DMs", "Search user", "Exit"};
         while (true) {
@@ -173,11 +175,11 @@ public class Main {
     }
 
     /**
- * Intenta crear una nueva sesion, si detectamos que ya existe un token.dat con
- * una sesion previa intenta retomar dicha session, si esta no autentica 
- * correctamente intentara crear una nueva sesion autenticando de nuevo
- * @return session 
- */
+     * Intenta crear una nueva sesion, si detectamos que ya existe un token.dat con
+     * una sesion previa intenta retomar dicha session, si esta no autentica
+     * correctamente intentara crear una nueva sesion autenticando de nuevo
+     * @return session
+     */
     private static Session getSession() {
         Session session = null;
         boolean persist = false;
@@ -210,11 +212,11 @@ public class Main {
         return session;
     }
 
-/**
- * assert que devuelve true si el string recibido es parseable a int
- * @param str a comprobar
- * @return 
- */
+    /**
+     * assert que devuelve true si el string recibido es parseable a int
+     * @param str a comprobar
+     * @return
+     */
     private static boolean isInteger(String str) {
         try {
             Integer.parseInt(str);
@@ -223,11 +225,12 @@ public class Main {
             return false;
         }
     }
-/**
- * procesamos el string introducido por el usuario en consola
- * @return - true si el usuario introduce Y o y, false si N o n
- * null si no es ni N n Y y
- */
+
+    /**
+     * procesamos el string introducido por el usuario en consola
+     * @return - true si el usuario introduce Y o y, false si N o n
+     * null si no es ni N n Y y
+     */
     private static Boolean consoleAssert() {
         switch ((int) scanChar()) {
             case 121: // 'y'
@@ -239,10 +242,11 @@ public class Main {
         }
         return null;
     }
-/**
- * generamos un scanner para recibir el char introducido por el usuario
- * @return 
- */
+
+    /**
+     * generamos un scanner para recibir el char introducido por el usuario
+     * @return
+     */
     private static char scanChar() {
         return new Scanner(System.in).next().charAt(0);
     }

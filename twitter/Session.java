@@ -13,10 +13,10 @@ import java.util.logging.Level;
  * @author fsancheztemprano
  */
 class Session {
-/**
- * parametro twitter que contiene un objeto de interfaz twitter y que 
- * sera creado por el TwitterFactory con los consumer key y token
- */
+    /**
+     * parametro twitter que contiene un objeto de interfaz twitter y que
+     * sera creado por el TwitterFactory con los consumer key y token
+     */
     private final Twitter twitter;
     /**
      * parametro PersistConsumerKey que contiene el procesado de una consumer 
@@ -39,25 +39,27 @@ class Session {
      */
     private final PersistAccessToken token;
 
-/**
- * constructor por defecto de una nueva session 
- * @throws TwitterException si falla la autenticacion
- */
+    /**
+     * constructor por defecto de una nueva session
+     *
+     * @throws TwitterException si falla la autenticacion
+     */
     public Session() throws TwitterException {
         this(false);
     }
-/**
- * consturctor base para las sesions
- * 
- * persist = true -> intenta retomar una session previamente autenticada 
- * y guardada.
- * 
- * persist = false -> borra cualquier sesion previa(si existe) e inicia 
- * una nueva sesion
- * 
- * @param persist
- * @throws TwitterException 
- */
+
+    /**
+     * consturctor base para las sesions
+     *
+     * persist = true -> intenta retomar una session previamente autenticada
+     * y guardada.
+     *
+     * persist = false -> borra cualquier sesion previa(si existe) e inicia
+     * una nueva sesion
+     *
+     * @param persist
+     * @throws TwitterException
+     */
     public Session(boolean persist) throws TwitterException {
         //intentamos leer un consumer.dat, si no existe realizamos 
         //la autenticacion OAuth
@@ -71,11 +73,11 @@ class Session {
             //consumer.saveKey();
             System.out.println("Defaults consumer set!");
         }
-/*
-  intentamos leer los tokens de una session previamente autenticada
-  y si no es valida o no existe solicitaremos autenticacion para
-  crear una nueva session
- */
+        /*
+          intentamos leer los tokens de una session previamente autenticada
+          y si no es valida o no existe solicitaremos autenticacion para
+          crear una nueva session
+         */
         token = new PersistAccessToken();
         if (!persist)
             token.removeKey();
@@ -92,10 +94,10 @@ class Session {
             //token.setDefault();TwitterException ex
             //e.printStackTrace();
         }
-/*
-  con todos los codigos de autenticacion validamos instanciamos
-  el Objeto twitter
- */
+        /*
+          con todos los codigos de autenticacion validamos instanciamos
+          el Objeto twitter
+         */
         ConfigurationBuilder configBuilder = new ConfigurationBuilder();
         configBuilder.setDebugEnabled(true)
                 .setOAuthConsumerKey(consumer.getApikey())
@@ -106,13 +108,13 @@ class Session {
         screenName = twitter.getScreenName();
         System.out.println("Authentication granted to @" + twitter.showUser(twitter.getScreenName()).getScreenName());
     }
-    
-/**
- * getter del parametro twitter
- * con este metodo accedemos a las funciones adicionales (no implementadas) de la session de twitter
- * 
- * @return Twitter
- */
+
+    /**
+     * getter del parametro twitter
+     * con este metodo accedemos a las funciones adicionales (no implementadas) de la session de twitter
+     *
+     * @return Twitter
+     */
     public Twitter getTwitter() {
         return twitter;
     }
@@ -122,8 +124,8 @@ class Session {
     }
 
     /**
- * imprime por consola el timeline de la cuenta autenticada
- */
+     * imprime por consola el timeline de la cuenta autenticada
+     */
     public void printTimeline() {
         Paging pagina = new Paging();
         pagina.setCount(50);
@@ -150,11 +152,11 @@ class Session {
         }
     }
 
-/**
- * metodo que publica un tweet 
- * el string a ser publicado en el tweet lo recibimos como parametro
- * @param string 
- */
+    /**
+     * metodo que publica un tweet
+     * el string a ser publicado en el tweet lo recibimos como parametro
+     * @param string
+     */
     public void updateStatus(String string) {
         try {
             twitter.updateStatus(string);
@@ -248,9 +250,10 @@ class Session {
     public void saveSession() {
         token.saveKey();
     }
-/**
- * metodo que elimina un archivo de tokens de usuario
- */
+
+    /**
+     * metodo que elimina un archivo de tokens de usuario
+     */
     public void clearSession() {
         token.removeKey();
     }

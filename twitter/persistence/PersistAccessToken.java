@@ -24,16 +24,19 @@ public class PersistAccessToken implements Persistable {
     private String secretToken;
 
     private Scanner scan;
-/**
- * constructor por defecto
- */
+
+    /**
+     * constructor por defecto
+     */
     public PersistAccessToken() {
     }
-/**
- * constructor que recibe los tokens de autorizacion
- * @param token
- * @param secretTk 
- */
+
+    /**
+     * constructor que recibe los tokens de autorizacion
+     *
+     * @param token
+     * @param secretTk
+     */
     public PersistAccessToken(String token, String secretTk) {
         this.token = token;
         this.secretToken = secretTk;
@@ -60,9 +63,10 @@ public class PersistAccessToken implements Persistable {
     public void setSecretToken(String secretToken) {
         this.secretToken = secretToken;
     }
-/**
- * guardamos los tokens autenticados en el archivo file para guardar la session
- */
+
+    /**
+     * guardamos los tokens autenticados en el archivo file para guardar la session
+     */
     @Override
     public void saveKey() {
         try (PrintWriter pw = new PrintWriter(file)) {
@@ -74,10 +78,11 @@ public class PersistAccessToken implements Persistable {
         }
         System.out.println("Token saved.");
     }
-/**
- * metodo que lee las tokens del file si existe
- * @throws FileNotFoundException  si el file no existe
- */
+
+    /**
+     * metodo que lee las tokens del file si existe
+     * @throws FileNotFoundException  si el file no existe
+     */
     @Override
     public void readKey() throws FileNotFoundException {
         scan = new Scanner(file);
@@ -85,9 +90,10 @@ public class PersistAccessToken implements Persistable {
         this.secretToken = scan.nextLine();
         System.out.println("Read token OK");
     }
-/**
- * elimina el file que contiene las tokes si existe
- */
+
+    /**
+     * elimina el file que contiene las tokes si existe
+     */
     public void removeKey() {
         if (scan != null)
             scan.close();
@@ -95,12 +101,12 @@ public class PersistAccessToken implements Persistable {
         //System.out.println("Token Killed");
     }
 
-/**
- * metodo que procesa la validacion de los api key y la autenticacion del cliente 
- * @param consumer
- * @throws IOException
- * @throws TwitterException 
- */
+    /**
+     * metodo que procesa la validacion de los api key y la autenticacion del cliente
+     * @param consumer
+     * @throws IOException
+     * @throws TwitterException
+     */
     public void createAccessToken(PersistConsumerKey consumer) throws IOException, TwitterException {
         ConfigurationBuilder configBuilder = new ConfigurationBuilder();
         configBuilder.setDebugEnabled(true)
