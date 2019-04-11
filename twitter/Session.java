@@ -113,7 +113,7 @@ class Session {
         return twitter;
     }
 /**
- * imprime por consola el timeline de la cuenta actual
+ * imprime por consola el timeline de la cuenta autenticada
  */
     public void printTimeline() {
         Paging pagina = new Paging();
@@ -145,23 +145,48 @@ class Session {
      * metodeo que devuelve los resultados de la busqueda del string que 
      * recibe como parametro
      * @param string
-     * @throws TwitterException 
      */
     public void searchStatus(String string)   {
         try {
             Query query = new Query(string);
             QueryResult result = twitter.search(query);
             result.getTweets().forEach((status) -> {
-                System.out.println("@" + status.getUser().getScreenName() + ":" + status.getText());    
+                System.out.printf("%20s | %15s | %100s %n", dateFormater(status.getCreatedAt()), ("@" + status.getUser().getScreenName()), status.getText());
             });
         } catch (TwitterException ex) {
             java.util.logging.Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-/**
- * metodo que guarda los token de acceso en un archivo para reiniciar session 
- */
+
+    public void searchUser(String query) {
+        int page = 1;
+        try {
+            ResponseList<User> users;
+            start:
+            do {
+                users = twitter.searchUsers(query, page);
+                String screenName = "";
+                for (User user : users) {
+                    if (user.getScreenName().equalsIgnoreCase(screenName)) {
+                        break start;
+                    }
+                    if (user.getStatus() != null) {
+                        System.out.println("@" + user.getScreenName() + " - " + user.getStatus().getText());
+                    } else {
+                        // the user is protected
+                        System.out.println("@" + user.getScreenName());
+                    }
+                }
+                page++;
+            } while (users.size() != 0 && page < 2);
+        } catch (TwitterException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * metodo que guarda los token de acceso en un archivo para reiniciar session
+     */
     public void saveSession() {
         token.saveKey();
     }
@@ -173,6 +198,6 @@ class Session {
     }
 
     public static String dateFormater(java.util.Date date){
-        return String.format("%2d:%2d:%2d %2d/%2d/%2d",date.getHours(), date.getMinutes(), date.getSeconds(), date.getDate(), date.getMonth(), date.getYear());
+        return String.format("%02d:%02d:%02d %02d/%02d/%02d", date.getHours(), date.getMinutes(), date.getSeconds(), date.getDate(), date.getMonth(), date.getYear());
     }
 }

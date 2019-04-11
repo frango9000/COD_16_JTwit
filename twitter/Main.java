@@ -23,6 +23,8 @@ public class Main {
                 try {
                     session = new Session(true);
                     switch (args[0]) {
+                        case "auth"://TODO
+                            break;
                         case "timeline":
                             session.printTimeline();
                             System.exit(3);
@@ -58,20 +60,9 @@ public class Main {
  * @param session recibe una session que debe estar autenticada
  */
     private static void menu(Session session) {
-        String[] options = {"Timeline", "Tweet", "Search Tweet","Timeline of User", "PM to user", "Exit"};
+        String[] options = {"Timeline", "Tweet", "Search Tweets","View DMs", "Search user", "Exit"};
         while (true) {
-            for (int i = 0; i < options.length; i++) {
-                System.out.println(i + 1 + ". " + options[i]);
-            }
-            String opt = "X";
-            int n = 0;
-            do {
-                do {
-                    opt = new Scanner(System.in).next();
-                } while (!isInteger(opt));
-                n = Integer.parseInt(opt);
-            } while (n < 1 || n > options.length);
-
+            int n = getPick(options);
             switch (n) {
                 case 1://Timeline
                     session.printTimeline();
@@ -82,16 +73,16 @@ public class Main {
                     tweet = tweet.substring(0, Math.min(139, tweet.length()));
                     session.updateStatus(tweet);
                     break;
-                case 3://Search Tweet
+                case 3://Search Tweets
                     System.out.println("Enter search term: \n");
                     String search = new Scanner(System.in).nextLine();
                     session.searchStatus(search);
                     break;                    
-                case 4://Timeline of User
-                case 5://PM to user
-                    
-                    
+                case 4://View DMs
 
+                case 5://Search user
+                    userQuery(session);
+                    break;
                 case 6://Exit
                     System.out.println("Save session? (Y/N) : ");
                     Boolean answer = null;
@@ -106,12 +97,59 @@ public class Main {
                     System.out.println("\nThank You");
                     System.exit(1);
                 default:
-                    System.out.println("DefBug");
+                    System.out.println("Invalid Option.");
 
             }
         }
     }
-/**
+
+    private static int getPick(String[] options) {
+        for (int i = 0; i < options.length; i++) {
+            System.out.println(i + 1 + ". " + options[i]);
+        }
+        String opt = "X";
+        int n = 0;
+        do {
+            do {
+                opt = new Scanner(System.in).next();
+            } while (!isInteger(opt));
+            n = Integer.parseInt(opt);
+        } while (n < 1 || n > options.length);
+        return n;
+    }
+
+    /**
+     *
+     * @param session
+     */
+    private static void userQuery(Session session) {
+        String[] options = {"Search User", "Pick User", "Back"};
+        while (true) {
+            int n = getPick(options);
+            switch (n) {
+                case 1:
+                    System.out.println("Enter search term: \n");
+                    String userQuery = new Scanner(System.in).nextLine();
+                    session.searchUser(userQuery);
+                    break;
+                case 2:
+                    interactionMenu(session);
+                    break;
+                case 3:
+                    return;
+                default:
+                    System.out.println("Invalid Option.");
+            }
+
+
+        }
+    }
+
+    public static void interactionMenu(Session session){
+
+    }
+
+    /**
  * Intenta crear una nueva sesion, si detectamos que ya existe un token.dat con
  * una sesion previa intenta retomar dicha session, si esta no autentica 
  * correctamente intentara crear una nueva sesion autenticando de nuevo
