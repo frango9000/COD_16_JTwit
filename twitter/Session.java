@@ -109,7 +109,8 @@ class Session {
     }
 
     /**
-     * devuelve un string con un formato de fecha hora basico a partir de un objeto Date
+     * devuelve un string con un formato de fecha hora basico a
+     * partir de un objeto Date
      *
      * @param date - objeto Date
      * @return - String formateado
@@ -120,7 +121,8 @@ class Session {
 
     /**
      * getter del parametro twitter
-     * con este metodo accedemos a las funciones adicionales (no implementadas) de la session de twitter
+     * con este metodo accedemos a las funciones adicionales 
+     * (no implementadas) de la session de twitter
      *
      * @return - Twitter
      */
@@ -154,7 +156,8 @@ class Session {
     }
 
     /**
-     * metodo que imprime en consola el timeline de un usuario que determinamos con su screenName
+     * metodo que imprime en consola el timeline de un usuario que
+     * determinamos con su screenName
      *
      * @param screenName - screenName del usuario a consultar
      */
@@ -162,7 +165,7 @@ class Session {
         Paging pagina = new Paging();
         pagina.setCount(50);
         try {
-            ResponseList<Status> listado = twitter.getUserTimeline(screenName);
+            ResponseList<Status> listado = twitter.getUserTimeline(screenName,pagina);
             for (Status status : listado) {
                 System.out.printf("%20s | %15s | %100s %n", dateFormater(status.getCreatedAt()), ("@" + status.getUser().getScreenName()), status.getText());
             }
@@ -196,6 +199,68 @@ class Session {
             result.getTweets().forEach((status) -> System.out.printf("%20s | %15s | %100s %n", dateFormater(status.getCreatedAt()), ("@" + status.getUser().getScreenName()), status.getText()));
         } catch (TwitterException ex) {
             java.util.logging.Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
+     * Metodo que genera un objeto IDs que se utiliza por printFolUserList para
+     * imprimir los usuarios que siguen a un usuario determinado por el id 
+     * en el parametro userId, si userId es null el usuario a consultar sera 
+     * el usuario autenticado
+     * 
+     * @param userId - id del usuario a consultar a quien sigue
+     */
+    public void printFollowing(Long userId) {
+        try {
+            System.out.println("\nFollowing: ");
+            if (userId == null) {
+                printFolUserList(twitter.getFriendsIDs(-1));
+            } else {
+                printFolUserList(twitter.getFriendsIDs(userId, -1));
+            }
+        } catch (TwitterException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Metodo que genera un objeto IDs que se utiliza por printFolUserList para
+     * imprimir los usuarios que siguen a un usuario determinado por el id 
+     * en el parametro userId, si userId es null el usuario a consultar sera 
+     * el usuario autenticado
+     * 
+     * @param userId - id del usuario a consultar quien sigue
+     */
+    public void printFollowers(Long userId) {
+        try {
+            System.out.println("\nFollowers: ");
+            if (userId == null) {
+                printFolUserList(twitter.getFollowersIDs(-1));
+            } else {
+                printFolUserList(twitter.getFollowersIDs(userId, -1));
+            }
+        } catch (TwitterException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * metodo utilizado por printFollowers() y printFollowing() para 
+     * imprimir los usuarios dentro del IDs
+     * 
+     * @param ids 
+     */
+    public void printFolUserList(IDs ids) {
+        try {
+            do {
+                for (long id : ids.getIDs()) {
+                    String followerName = twitter.showUser(id).getName();
+                    String followerScreenName = twitter.showUser(id).getScreenName();
+                    System.out.printf("@%15s | %15s | %20d %n", followerScreenName, followerName, id);
+                }
+                System.out.println();
+            } while (ids.hasNext());
+        } catch (TwitterException e) {
+            e.printStackTrace();
         }
     }
 

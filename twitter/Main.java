@@ -69,13 +69,14 @@ public class Main {
     }
 
     /**
-     * muestra un simple menu de opciones y acciones para realizar cuando la sesion
+     * muestra un simple menu de opciones y acciones para realizar 
+     * cuando la sesion
      * ya se ha autenticado
      *
      * @param session - sesion autenticada correctamente
      */
     private static void menu(Session session) {
-        String[] options = {"Timeline", "Tweet", "Search Tweets", "View DMs", "Search user", "Exit"};
+        String[] options = {"Timeline", "Tweet", "Search Tweets","Show Followers","Show Following", "View DMs", "Search user", "Exit"};
         while (true) {
             int n = getPick(options, "@" + session.getScreenName());
             switch (n) {
@@ -91,13 +92,19 @@ public class Main {
                     String search = scanString("Enter search term: \n");
                     session.searchStatus(search);
                     break;
-                case 4://View DMs
+                case 4://Show Followers
+                    session.printFollowers(null);
+                    break;
+                case 5://Show Following
+                    session.printFollowing(null);
+                    break;
+                case 6://View DMs
                     session.printDMs();
                     break;
-                case 5://Search user
+                case 7://Search user
                     userQuery(session);
                     break;
-                case 6://Exit
+                case 8://Exit
                     askSaveSession(session);
                     System.out.println("\nThank You");
                     System.exit(1);
@@ -109,7 +116,8 @@ public class Main {
     }
 
     /**
-     * metodo que le pregunta al usuario si quiere guardar la sesion autenticada y realiza la accion especificada
+     * metodo que le pregunta al usuario si quiere guardar la sesion 
+     * autenticada y realiza la accion especificada
      *
      * @param session - sesion autenticada correctamente
      */
@@ -161,18 +169,24 @@ public class Main {
         String query = scanString("Enter user screen name: ");
         try {
             User user = session.pickUser(query);
-            String[] options = {"View Timeline", "Send DM", "Back"};
+            String[] options = {"View Timeline", "Send DM", "Show Followers","Show Following", "Back"};
             while (true) {
                 int n = getPick(options, "@" + user.getScreenName());
                 switch (n) {
-                    case 1:
+                    case 1://View Timeline
                         session.printTimeline(user.getScreenName());
                         break;
                     case 2://DM
                         String dm = scanString("Enter message to send directly to @" + user.getScreenName() + " :\n");
                         session.sendDM(user.getId(), dm);
                         break;
-                    case 3:
+                    case 3://Show Followers
+                        session.printFollowers(user.getId());
+                        break;
+                    case 4://Show Following
+                        session.printFollowing(user.getId());                        
+                        break;
+                    case 5:
                         return;
                     default:
                         break;
@@ -223,8 +237,9 @@ public class Main {
     }
 
     /**
-     * metodo que recibe un array de strings cuyos elementos representan una de las opciones de un
-     * menu para interactuar con el usuario, imprime cada opcion (indice + 1), espera la entrada de texto
+     * metodo que recibe un array de strings cuyos elementos representan cada 
+     * una de las opciones de un menu para interactuar con el usuario, 
+     * imprime cada opcion (indice + 1), espera la entrada de texto
      * y por ultimo retorna la respuesta de usuario en un int
      *
      * @param options - array de strings con cada opcion del menu
@@ -246,7 +261,8 @@ public class Main {
     }
 
     /**
-     * sobrecarga del metodo getPick para imprimir un titulo antes de imprimir las opciones del menu
+     * sobrecarga del metodo getPick para imprimir un titulo antes de 
+     * imprimir las opciones del menu
      *
      * @param options - array de strings con cada opcion del menu
      * @param title   - titulo a mostrar
@@ -309,7 +325,8 @@ public class Main {
     }
 
     /**
-     * sobrecarga del metodo anterior que imprime un mensaje informando al usuario que debe introducir
+     * sobrecarga del metodo anterior que imprime un mensaje informando al 
+     * usuario que debe introducir
      *
      * @param message - string informativo
      * @return - string introducido por el usuario
