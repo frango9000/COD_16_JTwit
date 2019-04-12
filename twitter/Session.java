@@ -363,7 +363,12 @@ class Session {
             System.out.println("Failed to get messages: " + te.getMessage());
         }
     }
-
+    /**
+     * metodo que cambia el estado de seguimiento de un usuario determinado, 
+     * si ya lo sigues lo deja de seguir y visceversa
+     * 
+     * @param relation Objeto Relationship (source :usuario autenticado, target: usuario externo)
+     */
     public void toggleFollowUser(Relationship relation){
         try {
             if (relation.isSourceFollowingTarget()) {
@@ -375,7 +380,6 @@ class Session {
             java.util.logging.Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
         }        
     }
-    
     
     /**
      * metodo que guarda los token de acceso en un archivo para reiniciar session
