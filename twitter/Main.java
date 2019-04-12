@@ -170,9 +170,10 @@ public class Main {
         String query = scanString("Enter user screen name: ");
         try {
             User user = session.pickUser(query);
-            Relationship relationship = session.getTwitter().showFriendship(session.getAuthUserID(), user.getId());
+            Relationship relationship;
             String[] options = {"View Timeline", "Send DM", "Follow/UnFollow","Show Followers","Show Following", "Back"};
             while (true) {
+                relationship = session.getTwitter().showFriendship(session.getAuthUserID(), user.getId());
                 options[2] = (relationship.isSourceFollowingTarget()) ? "Unfollow" : "Follow";
                 int n = getPick(options, "@" + user.getScreenName());
                 switch (n) {
@@ -184,8 +185,7 @@ public class Main {
                         session.sendDM(user.getId(), dm);
                         break;
                     case 3://Follow/UnFollow
-                        session.toggleFollowUser(relationship);
-                        options[2] = (relationship.isSourceFollowingTarget()) ? "Unfollow" : "Follow";//todo cambiar opciones[2] al realizar el toggle
+                        session.toggleFollowUser(relationship);//follow pendig accept
                         System.out.println(((relationship.isSourceFollowingTarget()) ? "Unfollowed" : "Following" ) + ": @" +relationship.getTargetUserScreenName());
                         break;
                     case 4://Show Followers
