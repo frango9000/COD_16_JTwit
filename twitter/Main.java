@@ -5,6 +5,7 @@ import twitter4j.TwitterException;
 import twitter4j.User;
 
 import java.util.Scanner;
+import twitter4j.Relationship;
 
 /**
  * Clase main, contiene la logica de creacion de una nueva session o continuar
@@ -169,8 +170,10 @@ public class Main {
         String query = scanString("Enter user screen name: ");
         try {
             User user = session.pickUser(query);
-            String[] options = {"View Timeline", "Send DM", "Show Followers","Show Following", "Back"};
+            Relationship relationship = session.getTwitter().showFriendship(session.getAuthUserID(), user.getId());
+            String[] options = {"View Timeline", "Send DM", "Follow/UnFollow","Show Followers","Show Following", "Back"};
             while (true) {
+                options[2] = (relationship.isSourceFollowingTarget()) ? "Unfollow" : "Follow";
                 int n = getPick(options, "@" + user.getScreenName());
                 switch (n) {
                     case 1://View Timeline
@@ -180,13 +183,18 @@ public class Main {
                         String dm = scanString("Enter message to send directly to @" + user.getScreenName() + " :\n");
                         session.sendDM(user.getId(), dm);
                         break;
-                    case 3://Show Followers
+                    case 3://Follow/UnFollow
+                        session.toggleFollowUser(relationship);
+                        options[2] = (relationship.isSourceFollowingTarget()) ? "Unfollow" : "Follow";//todo cambiar opciones[2] al realizar el toggle
+                        System.out.println(((relationship.isSourceFollowingTarget()) ? "Unfollowed" : "Following" ) + ": @" +relationship.getTargetUserScreenName());
+                        break;
+                    case 4://Show Followers
                         session.printFollowers(user.getId());
                         break;
-                    case 4://Show Following
+                    case 5://Show Following
                         session.printFollowing(user.getId());                        
                         break;
-                    case 5:
+                    case 6:
                         return;
                     default:
                         break;
