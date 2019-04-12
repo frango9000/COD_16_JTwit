@@ -245,9 +245,9 @@ class Session {
     }
     /**
      * metodo utilizado por printFollowers() y printFollowing() para 
-     * imprimir los usuarios dentro del IDs
+     * imprimir los usuarios dentro del IDs que recibe como parametro
      * 
-     * @param ids 
+     * @param ids - objeto IDs que contiene un grupo de IDs a ser mostrados
      */
     public void printFolUserList(IDs ids) {
         try {
