@@ -24,6 +24,7 @@ class Session {
      * String q contiene el screen name del usuario autenticado
      */
     private final String screenName;
+    private final long authUserID;
     /**
      * parametro PersistAccessToken que contiene el procesado de una token
      * key preestablecida o la carga de una token key desde el
@@ -105,6 +106,7 @@ class Session {
                 .setOAuthAccessTokenSecret(token.getSecretToken());
         twitter = new TwitterFactory(configBuilder.build()).getInstance();
         screenName = twitter.getScreenName();
+        authUserID = twitter.getId();
         System.out.println("Authentication granted to @" + twitter.showUser(twitter.getScreenName()).getScreenName());
     }
 
@@ -137,6 +139,10 @@ class Session {
      */
     public String getScreenName() {
         return screenName;
+    }
+
+    public long getAuthUserID() {
+        return authUserID;
     }
 
     /**
@@ -358,6 +364,19 @@ class Session {
         }
     }
 
+    public void toggleFollowUser(Relationship relation){
+        try {
+            if (relation.isSourceFollowingTarget()) {
+                twitter.destroyFriendship(relation.getTargetUserId());
+            } else {
+                twitter.createFriendship(relation.getTargetUserId());
+            }
+        } catch (TwitterException ex) {
+            java.util.logging.Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+    }
+    
+    
     /**
      * metodo que guarda los token de acceso en un archivo para reiniciar session
      */
